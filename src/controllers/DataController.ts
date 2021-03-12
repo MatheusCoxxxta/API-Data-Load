@@ -2,12 +2,12 @@ import { Request, Response } from "express";
 import Projetos from "../models/Projetos";
 import Jira from "../../mocks/data/jira";
 import Trello from "../../mocks/data/trello";
-import { unificados } from "../types/unificados";
+import { projeto } from "../types/Projeto";
 
 class DataController {
   async SaveJira(req: Request, response: Response) {
     Jira.forEach(async (dado: any) => {
-      let myJson: unificados = {
+      let myJson: projeto = {
         id: "",
         status: "",
         horas: 0,
@@ -25,7 +25,7 @@ class DataController {
 
   async SaveTrello(req: Request, response: Response) {
     Trello.forEach(async (dado: any) => {
-      let myJson: unificados = {
+      let myJson: projeto = {
         id: "",
         status: "",
         horas: 0,

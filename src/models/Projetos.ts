@@ -1,6 +1,6 @@
 import { Model } from "objection";
 import connection from "../database/connection";
-import { unificados as ProjetosType } from "../types/unificados";
+import { projeto as ProjetosType } from "../types/Projeto";
 
 Model.knex(connection);
 
