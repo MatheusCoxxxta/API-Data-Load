@@ -7,8 +7,6 @@ import { unificados } from "../types/unificados";
 
 class DataController {
   async SaveJira(req: Request, response: Response) {
-    let dadosJira: any = [];
-
     Jira.forEach(async (dado: any) => {
       let myJson: unificados = {
         id: "",
@@ -20,9 +18,7 @@ class DataController {
       myJson.status = dado.status;
       myJson.horas = dado.amountHours || 0;
 
-      dadosJira = [...dadosJira, myJson];
-
-      const jira = await Projetos.query().insert(myJson);
+      await Projetos.query().insert(myJson);
     });
 
     return response.send("Ok.");
