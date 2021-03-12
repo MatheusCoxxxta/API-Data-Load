@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import Projetos from "../models/Projetos";
-import UserType from "../types";
 import Jira from "../../mocks/data/jira";
 import Trello from "../../mocks/data/trello";
 import { unificados } from "../types/unificados";
@@ -21,12 +20,10 @@ class DataController {
       await Projetos.query().insert(myJson);
     });
 
-    return response.send("Ok.");
+    return response.status(201).send("Ok.");
   }
 
   async SaveTrello(req: Request, response: Response) {
-    let dadosTrello: any = [];
-
     Trello.forEach(async (dado: any) => {
       let myJson: unificados = {
         id: "",
@@ -38,12 +35,10 @@ class DataController {
       myJson.status = dado.status;
       myJson.horas = dado.hours || 0;
 
-      dadosTrello = [...dadosTrello, myJson];
-
-      const trello = await Projetos.query().insert(myJson);
+      await Projetos.query().insert(myJson);
     });
 
-    return response.send({ trello: dadosTrello });
+    return response.status(201).send("Ok.");
   }
 
   async listar(req: Request, response: Response) {
