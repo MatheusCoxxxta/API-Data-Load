@@ -3,21 +3,49 @@ import Projetos from "../models/Projetos";
 import Jira from "../../mocks/data/jira";
 import Trello from "../../mocks/data/trello";
 import { projeto } from "../types/Projeto";
+import Usuarios from "../models/Usuarios";
+import { usuario } from "../types/Usuarios";
 
 class DataController {
   async SaveJira(req: Request, response: Response) {
     Jira.forEach(async (dado: any) => {
-      let myJson: projeto = {
+      let myProjects: projeto = {
         id: "",
         status: "",
         horas: 0,
+        id_usuario: "",
+        dataInicio: "",
+        projetoNome: "",
+        concluido: false,
+        descricao: "",
       };
 
-      myJson.id = dado.id;
-      myJson.status = dado.status;
-      myJson.horas = dado.amountHours || 0;
+      let myUser: usuario = {
+        id: "",
+        imagem: "",
+        nome: "",
+        sobrenome: "",
+        email: "",
+      };
 
-      await Projetos.query().insert(myJson);
+      myProjects.id = dado.id;
+      myProjects.status = dado.status;
+      myProjects.horas = dado.amountHours || 0;
+      myProjects.dataInicio = dado.startedAt;
+      myProjects.projetoNome = dado.project;
+      myProjects.concluido = dado.finished ? true : false;
+      myProjects.descricao = dado.cardDescription;
+
+      myUser.id = dado.user.id;
+      myUser.imagem = dado.user.avatar;
+      myUser.nome = dado.user.first_name;
+      myUser.sobrenome = dado.user.last_name;
+      myUser.email = dado.user.email;
+
+      myProjects.id_usuario = dado.user.id;
+
+      await Usuarios.query().insert(myUser);
+      await Projetos.query().insert(myProjects);
     });
 
     return response.status(201).send("Ok.");
@@ -25,26 +53,60 @@ class DataController {
 
   async SaveTrello(req: Request, response: Response) {
     Trello.forEach(async (dado: any) => {
-      let myJson: projeto = {
+      let myProjects: projeto = {
         id: "",
         status: "",
         horas: 0,
+        id_usuario: "",
+        dataInicio: "",
+        projetoNome: "",
+        concluido: false,
+        descricao: "",
       };
 
-      myJson.id = dado._id;
-      myJson.status = dado.status;
-      myJson.horas = dado.hours || 0;
+      let myUser: usuario = {
+        id: "",
+        imagem: "",
+        nome: "",
+        sobrenome: "",
+        email: "",
+      };
 
-      await Projetos.query().insert(myJson);
+      myProjects.id = dado._id;
+      myProjects.status = dado.status;
+      myProjects.horas = dado.hours || 0;
+
+      myProjects.dataInicio = dado.startedAt;
+      myProjects.projetoNome = dado.project;
+      myProjects.concluido = dado.isFinished ? true : false;
+      myProjects.descricao = dado.cardDescription;
+
+      myUser.id = dado.user._id;
+      myUser.imagem = dado.user.avatar;
+      myUser.nome = dado.user.userName;
+      myUser.sobrenome = dado.user.userLastName;
+      myUser.email = dado.user.userEmail;
+
+      myProjects.id_usuario = dado.user._id;
+
+      await Usuarios.query().insert(myUser);
+      await Projetos.query().insert(myProjects);
     });
 
     return response.status(201).send("Ok.");
   }
 
   async listar(req: Request, response: Response) {
-    const projetos = await Projetos.query().select("*");
+    const { page } = req.params;
 
-    return response.status(200).send(projetos);
+    const myPage: number = parseInt(page);
+
+    const projetos = await Projetos.query()
+      .select("*")
+      .joinRelated("users")
+      .page(myPage, 100);
+
+    return response.status(200).send(projetos.results);
   }
 }
 
