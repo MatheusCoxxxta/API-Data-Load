@@ -5,10 +5,25 @@ import Trello from "../../mocks/data/trello";
 import { projeto } from "../types/Projeto";
 import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
+import { removeDeplicated } from "../helpers/RemoveDuplicated";
+import knex from "../database/connection";
 
 class DataController {
-  async SaveJira(req: Request, response: Response) {
+  async joinData(req: Request, response: Response) {
+    let jiraUsers: usuario[] = [];
+    let trelloUsers: usuario[] = [];
+    let jiraProjects: projeto[] = [];
+    let trelloProjects: projeto[] = [];
+
     Jira.forEach(async (dado: any) => {
+      let myUser: usuario = {
+        id: "",
+        imagem: "",
+        nome: "",
+        sobrenome: "",
+        email: "",
+      };
+
       let myProjects: projeto = {
         id: "",
         status: "",
@@ -20,13 +35,11 @@ class DataController {
         descricao: "",
       };
 
-      let myUser: usuario = {
-        id: "",
-        imagem: "",
-        nome: "",
-        sobrenome: "",
-        email: "",
-      };
+      myUser.id = dado.user.id;
+      myUser.imagem = dado.user.avatar;
+      myUser.nome = dado.user.first_name;
+      myUser.sobrenome = dado.user.last_name;
+      myUser.email = dado.user.email;
 
       myProjects.id = dado.id;
       myProjects.status = dado.status;
@@ -36,22 +49,13 @@ class DataController {
       myProjects.concluido = dado.finished ? true : false;
       myProjects.descricao = dado.cardDescription;
 
-      myUser.id = dado.user.id;
-      myUser.imagem = dado.user.avatar;
-      myUser.nome = dado.user.first_name;
-      myUser.sobrenome = dado.user.last_name;
-      myUser.email = dado.user.email;
-
       myProjects.id_usuario = dado.user.id;
 
-      await Usuarios.query().insert(myUser);
+      jiraUsers = [...jiraUsers, myUser];
+      jiraProjects = [...jiraProjects, myProjects];
       await Projetos.query().insert(myProjects);
     });
 
-    return response.status(201).send("Ok.");
-  }
-
-  async SaveTrello(req: Request, response: Response) {
     Trello.forEach(async (dado: any) => {
       let myProjects: projeto = {
         id: "",
@@ -89,24 +93,47 @@ class DataController {
 
       myProjects.id_usuario = dado.user._id;
 
-      await Usuarios.query().insert(myUser);
+      trelloUsers = [...trelloUsers, myUser];
+      trelloProjects = [...trelloProjects, myProjects];
       await Projetos.query().insert(myProjects);
     });
 
-    return response.status(201).send("Ok.");
+    const allUsers = trelloUsers.concat(jiraUsers);
+    const formatedUsers = await removeDeplicated(allUsers);
+
+    formatedUsers.forEach(async (user: usuario) => {
+      console.log(user);
+      await Usuarios.query().insert(user);
+    });
+
+    return response.status(201).send(jiraProjects.concat(trelloProjects));
   }
 
   async listar(req: Request, response: Response) {
     const { page } = req.params;
 
     const myPage: number = parseInt(page);
+    const [count] = await knex("projetos").count();
+    const data = await knex("projetos")
+      .join("usuarios", "usuarios.id", "projetos.id_usuario")
+      .select(
+        "projetos.id",
+        "projetos.status",
+        "projetos.horas",
+        "projetos.dataInicio",
+        "projetos.projetoNome",
+        "projetos.concluido",
+        "projetos.descricao",
+        "projetos.id_usuario",
+        "usuarios.nome",
+        "usuarios.imagem",
+        "usuarios.email",
+        "usuarios.sobrenome"
+      )
+      .limit(50)
+      .offset((myPage - 1) * 5);
 
-    const projetos = await Projetos.query()
-      .select("*")
-      .joinRelated("users")
-      .page(myPage, 100);
-
-    return response.status(200).send(projetos.results);
+    return response.status(200).json({ total: count, data: data });
   }
 }
 
