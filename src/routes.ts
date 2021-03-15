@@ -9,8 +9,7 @@ routes.get("/", (request, response) => {
   response.send({ message: "Server online" });
 });
 
-routes.post("/salvarJira", dataController.SaveJira);
-routes.post("/salvarTrello", dataController.SaveTrello);
+routes.post("/joinData", dataController.joinData);
 routes.get("/listar/:page", dataController.listar);
 
 export default routes;
