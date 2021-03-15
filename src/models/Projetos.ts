@@ -12,6 +12,10 @@ class Projetos extends Model {
     return "projetos";
   }
 
+  static get idColumn() {
+    return "id";
+  }
+
   static get jsonSchema() {
     return {
       type: "object",
