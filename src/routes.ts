@@ -1,7 +1,9 @@
 import express from "express";
 import DataController from "./controllers/DataController";
 import ProjectsController from "./controllers/ProjectsController";
+import UsersController from "./controllers/UsersController";
 
+const usersController = new UsersController();
 const projectsController = new ProjectsController();
 const dataController = new DataController();
 
@@ -15,5 +17,7 @@ routes.post("/joinData", dataController.joinData);
 routes.get("/listar/:page", dataController.listar);
 
 routes.get("/projects/:id", projectsController.show);
+
+routes.get("/users", usersController.index);
 
 export default routes;
