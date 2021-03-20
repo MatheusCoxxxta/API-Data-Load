@@ -15,26 +15,26 @@ class DataController {
     let jiraProjects: projeto[] = [];
     let trelloProjects: projeto[] = [];
 
+    let myUser: usuario = {
+      id: "",
+      imagem: "",
+      nome: "",
+      sobrenome: "",
+      email: "",
+    };
+
+    let myProjects: projeto = {
+      id: "",
+      status: "",
+      horas: 0,
+      id_usuario: "",
+      dataInicio: "",
+      projetoNome: "",
+      concluido: false,
+      descricao: "",
+    };
+
     Jira.forEach(async (dado: any) => {
-      let myUser: usuario = {
-        id: "",
-        imagem: "",
-        nome: "",
-        sobrenome: "",
-        email: "",
-      };
-
-      let myProjects: projeto = {
-        id: "",
-        status: "",
-        horas: 0,
-        id_usuario: "",
-        dataInicio: "",
-        projetoNome: "",
-        concluido: false,
-        descricao: "",
-      };
-
       myUser.id = dado.user.id;
       myUser.imagem = dado.user.avatar;
       myUser.nome = dado.user.first_name;
@@ -57,25 +57,6 @@ class DataController {
     });
 
     Trello.forEach(async (dado: any) => {
-      let myProjects: projeto = {
-        id: "",
-        status: "",
-        horas: 0,
-        id_usuario: "",
-        dataInicio: "",
-        projetoNome: "",
-        concluido: false,
-        descricao: "",
-      };
-
-      let myUser: usuario = {
-        id: "",
-        imagem: "",
-        nome: "",
-        sobrenome: "",
-        email: "",
-      };
-
       myProjects.id = dado._id;
       myProjects.status = dado.status;
       myProjects.horas = dado.hours || 0;
@@ -102,7 +83,6 @@ class DataController {
     const formatedUsers = await removeDeplicated(allUsers);
 
     formatedUsers.forEach(async (user: usuario) => {
-      console.log(user);
       await Usuarios.query().insert(user);
     });
 
