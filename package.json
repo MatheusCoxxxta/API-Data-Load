@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "dotenv": "^8.2.0",
+    "export-to-csv": "^0.2.1",
     "express": "^4.17.1",
     "knex": "^0.21.12",
     "objection": "^2.2.3",
