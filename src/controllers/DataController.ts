@@ -148,6 +148,20 @@ class DataController {
       useTextFile: false,
       useBom: true,
       useKeysAsHeaders: false,
+      headers: [
+        "Id do projeto",
+        "Status do projeto",
+        "Horas trabalhadas",
+        "Data de início",
+        "Nome do projeto",
+        "Status de conlusão",
+        "Descrição do projeto",
+        "Id do colaborador",
+        "Nome do colaborador",
+        "URL da imagem",
+        "Email do colaborador",
+        "Sobrenome do colaborador",
+      ],
     };
 
     const data = await knex("projetos")
