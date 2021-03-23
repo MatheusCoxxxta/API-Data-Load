@@ -7,9 +7,11 @@ import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
 import { removeDeplicated } from "../helpers/RemoveDuplicated";
 import knex from "../database/connection";
+import { ExportToCsv } from "export-to-csv";
+import fs from "fs";
 
 class DataController {
-  async joinData(req: Request, response: Response) {
+  async joinData(request: Request, response: Response) {
     let jiraUsers: usuario[] = [];
     let trelloUsers: usuario[] = [];
     let jiraProjects: projeto[] = [];
@@ -108,8 +110,8 @@ class DataController {
     return response.status(201).send(jiraProjects.concat(trelloProjects));
   }
 
-  async listar(req: Request, response: Response) {
-    const { page } = req.params;
+  async listar(request: Request, response: Response) {
+    const { page } = request.params;
 
     const myPage: number = parseInt(page);
     const [count] = await knex("projetos").count();
@@ -133,6 +135,45 @@ class DataController {
       .offset((myPage - 1) * 5);
 
     return response.status(200).json({ total: count, data: data });
+  }
+
+  async exportData(request: Request, res: Response) {
+    const options = {
+      fieldSeparator: ",",
+      quoteStrings: '"',
+      decimalSeparator: ".",
+      showLabels: true,
+      showTitle: true,
+      title: "Dados GSW",
+      useTextFile: false,
+      useBom: true,
+      useKeysAsHeaders: true,
+    };
+
+    const data = await knex("projetos")
+      .join("usuarios", "usuarios.id", "projetos.id_usuario")
+      .select(
+        "projetos.id",
+        "projetos.status",
+        "projetos.horas",
+        "projetos.dataInicio",
+        "projetos.projetoNome",
+        "projetos.concluido",
+        "projetos.descricao",
+        "projetos.id_usuario",
+        "usuarios.nome",
+        "usuarios.imagem",
+        "usuarios.email",
+        "usuarios.sobrenome"
+      );
+
+    const csvExporter = new ExportToCsv(options);
+    const csvData = csvExporter.generateCsv(data, true);
+    fs.writeFileSync(`data-${Math.random()}.csv`, csvData);
+
+    return res.send({
+      message: "Download finalizado!",
+    });
   }
 }
 

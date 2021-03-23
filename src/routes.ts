@@ -15,6 +15,7 @@ routes.get("/", (request, response) => {
 
 routes.post("/joinData", dataController.joinData);
 routes.get("/listar/:page", dataController.listar);
+routes.get("/exportData", dataController.exportData);
 
 routes.get("/projects/:id", projectsController.show);
 
