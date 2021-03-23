@@ -183,11 +183,11 @@ class DataController {
 
     const csvExporter = new ExportToCsv(options);
     const csvData = csvExporter.generateCsv(data, true);
-    fs.writeFileSync(`./tmp/data-${Math.random()}.csv`, csvData);
+    const fileName = `data-${Math.random()}.csv`;
+    const file = `./tmp/${fileName}`;
+    fs.writeFileSync(`./tmp/${fileName}`, csvData);
 
-    return res.send({
-      message: "Download finalizado!",
-    });
+    return res.download(file);
   }
 }
 
