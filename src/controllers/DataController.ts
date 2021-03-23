@@ -139,15 +139,15 @@ class DataController {
 
   async exportData(request: Request, res: Response) {
     const options = {
-      fieldSeparator: ",",
-      quoteStrings: '"',
+      fieldSeparator: "|",
+      quoteStrings: "",
       decimalSeparator: ".",
       showLabels: true,
       showTitle: true,
       title: "Dados GSW",
       useTextFile: false,
       useBom: true,
-      useKeysAsHeaders: true,
+      useKeysAsHeaders: false,
     };
 
     const data = await knex("projetos")
@@ -169,7 +169,7 @@ class DataController {
 
     const csvExporter = new ExportToCsv(options);
     const csvData = csvExporter.generateCsv(data, true);
-    fs.writeFileSync(`data-${Math.random()}.csv`, csvData);
+    fs.writeFileSync(`./tmp/data-${Math.random()}.csv`, csvData);
 
     return res.send({
       message: "Download finalizado!",
