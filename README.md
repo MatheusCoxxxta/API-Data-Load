@@ -1,24 +1,7 @@
-# TypeScript Node Boilerplate
-<br/>
+# API - EVO - BACKEND
+Serviço criada com propósito de unificar dados da GSW, fornecer dados para o front-end e executar todas as funções de conexão com a base de dados e se necessário serviços de terceiros na aplicação.
 
-## Contains in this boilerplate
-
-- Controllers
-- Database
-- Models
-- Types
-- Tests
-  - Integration
-
-<br/>
-
-# Database Info
-
-**Client: SQLite3**
-
-<br />
-
-# How to use
+# Como utilizar
 
 ### Download
 
@@ -27,7 +10,7 @@ git clone https://github.com/MatheusCoxxxta/TypeScript-Node-Boilerplate.git serv
 ```
 <br/>
 
-### Install
+### Instalação
 
 ```
 cd server
@@ -52,6 +35,9 @@ yarn test
 ```
 <br/>
 
-# Author
 
-**[Matheus Costa](github.com/MatheusCoxxxta)**
+# Importante
+Serviço criado com base no [TypeScript-Node-Boilerplate](https://github.com/MatheusCoxxxta/TypeScript-Node-Boilerplate).
+### Autor do boilerplate
+
+**[Matheus Costa](github.com/MatheusCoxxxta)** (membro da equipe)
