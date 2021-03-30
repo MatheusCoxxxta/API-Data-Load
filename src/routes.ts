@@ -13,7 +13,7 @@ routes.get("/", (request, response) => {
   response.send({ message: "Server online" });
 });
 
-routes.get("/joinData", dataController.joinData);
+routes.post("/joinData", dataController.joinData);
 routes.get("/listar/:page", dataController.listar);
 routes.get("/exportData", dataController.exportData);
 
