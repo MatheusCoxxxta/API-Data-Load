@@ -15,6 +15,7 @@
     "dotenv": "^8.2.0",
     "export-to-csv": "^0.2.1",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "knex": "^0.21.12",
     "objection": "^2.2.3",
     "sqlite3": "^5.0.0",
@@ -23,6 +24,7 @@
   "devDependencies": {
     "@types/express": "^4.17.9",
     "@types/jest": "^26.0.18",
+    "@types/jsonwebtoken": "^8.5.1",
     "@types/supertest": "^2.0.10",
     "jest": "^26.6.3",
     "supertest": "^6.0.1",
