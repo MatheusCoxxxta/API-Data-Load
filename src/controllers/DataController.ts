@@ -9,6 +9,12 @@ import { removeDeplicated } from "../helpers/RemoveDuplicated";
 import knex from "../database/connection";
 import { ExportToCsv } from "export-to-csv";
 import fs from "fs";
+import bcrypt from "bcrypt";
+
+const encryptedPassword = async (password: string) => {
+  const hash = await bcrypt.hash(password, 10);
+  return hash;
+};
 
 class DataController {
   async joinData(request: Request, response: Response) {
@@ -24,6 +30,7 @@ class DataController {
         nome: "",
         sobrenome: "",
         email: "",
+        senha: "",
       };
 
       let myProjects: projeto = {
@@ -42,6 +49,7 @@ class DataController {
       myUser.nome = dado.user.first_name;
       myUser.sobrenome = dado.user.last_name;
       myUser.email = dado.user.email;
+      myUser.senha = dado.user._id;
 
       myProjects.id = dado.id;
       myProjects.status = dado.status;
@@ -65,6 +73,7 @@ class DataController {
         nome: "",
         sobrenome: "",
         email: "",
+        senha: "",
       };
 
       let myProjects: projeto = {
@@ -92,6 +101,7 @@ class DataController {
       myUser.nome = dado.user.userName;
       myUser.sobrenome = dado.user.userLastName;
       myUser.email = dado.user.userEmail;
+      myUser.senha = dado.user._id;
 
       myProjects.id_usuario = dado.user._id;
 
