@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import generateToken from "../helpers/generateToken";
 import Usuarios from "../models//Usuarios";
+import Token from "../models/Token";
 
 class Auth {
   async signIn(req: Request, res: Response) {
@@ -9,16 +10,31 @@ class Auth {
 
       const userData = await Usuarios.query().where("email", email).first();
 
-      if (userData.senha !== senha) {
+      if (!userData) {
         return res.status(401).json({
+          message: "Email não encontrado!",
+        });
+      } else if (userData.senha !== senha) {
+        return res.status(404).json({
           message: "Não autorizado!",
         });
       } else if (userData.senha === senha) {
         const token = await generateToken({ id: userData.id });
-        /**
-        await Usuarios.query().where("id", userData.id).update({
-          token,
-        });*/
+
+        const existentToken = await Token.query()
+          .where("id_usuario", userData.id)
+          .first();
+
+        if (existentToken) {
+          await Token.query().where("id_usuario", userData.id).update({
+            token,
+          });
+        } else {
+          await Token.query().insert({
+            token,
+            id_usuario: userData.id,
+          });
+        }
 
         userData.senha = "";
 
