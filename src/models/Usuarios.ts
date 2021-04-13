@@ -22,6 +22,7 @@ class Usuarios extends Model {
         nome: { type: "string", minLength: 1, maxLength: 255 },
         sobrenome: { type: "string", minLength: 1, maxLength: 255 },
         email: { type: "string", minLength: 1, maxLength: 255 },
+        senha: { type: "string", minLength: 1, maxLength: 255 },
       },
     };
   }
