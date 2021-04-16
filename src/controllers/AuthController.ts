@@ -11,11 +11,11 @@ class Auth {
       const userData = await Usuarios.query().where("email", email).first();
 
       if (!userData) {
-        return res.status(401).json({
+        return res.status(404).json({
           message: "Email não encontrado!",
         });
       } else if (userData.senha !== senha) {
-        return res.status(404).json({
+        return res.status(401).json({
           message: "Não autorizado!",
         });
       } else if (userData.senha === senha) {
