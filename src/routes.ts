@@ -5,6 +5,7 @@ import UsersController from "./controllers/UsersController";
 import AuthController from "./controllers/AuthController";
 import ProjectDataController from "./controllers/ProjectDataController";
 import TasksController from "./controllers/TasksController";
+import auth from "./middlewares/auth";
 
 const usersController = new UsersController();
 const projectsController = new ProjectsController();
@@ -19,12 +20,12 @@ routes.get("/", (request, response) => {
   response.send({ message: "Server online" });
 });
 
-routes.get("/listar/:page", dataController.listar);
-routes.get("/exportData", dataController.exportData);
+routes.get("/listar", auth, dataController.listar);
+routes.get("/exportData", auth, dataController.exportData);
 
-routes.get("/projects/:id", projectsController.show);
+routes.get("/projects/:id", auth, projectsController.show);
 
-routes.get("/users", usersController.index);
+routes.get("/users", auth, usersController.index);
 
 routes.post("/login", authController.signIn);
 
