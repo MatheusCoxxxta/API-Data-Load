@@ -7,6 +7,7 @@ import { removeDeplicatedProject } from "../helpers/RemoveDuplicatedProject";
 import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
 import { removeDeplicated } from "../helpers/RemoveDuplicated";
+import generateHash from "../helpers/generateHash";
 
 class ProjectDataController {
   async storeProject(request: Request, response: Response) {
@@ -59,7 +60,7 @@ class ProjectDataController {
       myUser.nome = dado.user.first_name;
       myUser.sobrenome = dado.user.last_name;
       myUser.email = dado.user.email;
-      myUser.senha = dado.user._id;
+      myUser.senha = generateHash();
 
       users = [...users, myUser];
     });
@@ -79,14 +80,12 @@ class ProjectDataController {
       myUser.nome = dado.user.userName;
       myUser.sobrenome = dado.user.userLastName;
       myUser.email = dado.user.userEmail;
-      myUser.senha = dado.user._id;
+      myUser.senha = generateHash();
 
       users = [...users, myUser];
     });
 
     const finalUsers = await removeDeplicated(users);
-
-    finalUsers.forEach((user: usuario) => {});
 
     for (let i = 0; i < finalUsers.length; i++) {
       await Usuarios.query().insert(finalUsers[i]);
