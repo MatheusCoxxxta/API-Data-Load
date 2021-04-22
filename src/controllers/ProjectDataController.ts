@@ -33,8 +33,6 @@ class ProjectDataController {
 
     let projectsArray: projeto[] = [];
     for (let i = 0; i < finalProjects.length; i++) {
-      console.log(finalProjects[i]);
-
       projectsArray = [...projectsArray, finalProjects[i]];
       await Projetos.query().insert(projectsArray[i]);
     }
