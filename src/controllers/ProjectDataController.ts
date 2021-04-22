@@ -44,7 +44,7 @@ class ProjectDataController {
   async storeUsers(request: Request, response: Response) {
     let users: usuario[] = [];
 
-    Jira.forEach(async (dado: any) => {
+    Jira.forEach((dado: any) => {
       let myUser: usuario = {
         id: "",
         imagem: "",
@@ -64,7 +64,7 @@ class ProjectDataController {
       users = [...users, myUser];
     });
 
-    Trello.forEach(async (dado: any) => {
+    Trello.forEach((dado: any) => {
       let myUser: usuario = {
         id: "",
         imagem: "",
