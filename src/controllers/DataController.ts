@@ -3,6 +3,7 @@ import knex from "../database/connection";
 import { ExportToCsv } from "export-to-csv";
 import fs from "fs";
 import bcrypt from "bcrypt";
+import Projetos from "../models/Projetos";
 
 const encryptedPassword = async (password: string) => {
   const hash = await bcrypt.hash(password, 10);
@@ -11,30 +12,39 @@ const encryptedPassword = async (password: string) => {
 
 class DataController {
   async listar(request: Request, response: Response) {
-    const { page } = request.params;
+    const userId = response.locals.tokenData.id;
+    const projectId = request.headers.projectid || "";
+    console.log(projectId);
 
-    const myPage: number = parseInt(page);
-    const [count] = await knex("projetos").count();
-    const data = await knex("projetos")
-      .join("usuarios", "usuarios.id", "projetos.id_usuario")
-      .select(
-        "projetos.id",
-        "projetos.status",
-        "projetos.horas",
-        "projetos.dataInicio",
-        "projetos.projetoNome",
-        "projetos.concluido",
-        "projetos.descricao",
-        "projetos.id_usuario",
-        "usuarios.nome",
-        "usuarios.imagem",
-        "usuarios.email",
-        "usuarios.sobrenome"
-      )
-      .limit(50)
-      .offset((myPage - 1) * 5);
+    if (userId && projectId) {
+      const data = await knex("tarefas")
+        .join("usuarios", "usuarios.id", "tarefas.id_usuario")
+        .select(
+          "tarefas.id",
+          "tarefas.concluido",
+          "tarefas.status",
+          "tarefas.descricao"
+        )
 
-    return response.status(200).json({ total: count, data: data });
+        .where("id_projeto", projectId)
+        .where("id_usuario", userId);
+
+      const projeto = await Projetos.query()
+        .select("*")
+        .where("id", projectId)
+        .first();
+
+      const tasks = {
+        project: projeto.projetoNome,
+        tasks: data,
+      };
+
+      return response.status(200).json(tasks);
+    } else {
+      return response.status(404).json({
+        message: "Necessário informar projeto.",
+      });
+    }
   }
 
   async exportData(request: Request, res: Response) {
