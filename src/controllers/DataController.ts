@@ -14,7 +14,6 @@ class DataController {
   async listar(request: Request, response: Response) {
     const userId = response.locals.tokenData.id;
     const projectId = request.headers.projectid || "";
-    console.log(projectId);
 
     if (userId && projectId) {
       const data = await knex("tarefas")
@@ -23,7 +22,8 @@ class DataController {
           "tarefas.id",
           "tarefas.concluido",
           "tarefas.status",
-          "tarefas.descricao"
+          "tarefas.descricao",
+          "tarefas.horas"
         )
 
         .where("id_projeto", projectId)
