@@ -24,6 +24,7 @@ routes.get("/listar", auth, dataController.listar);
 routes.get("/exportData", auth, dataController.exportData);
 
 routes.get("/projects/:id", auth, projectsController.show);
+routes.get("/projects", auth, projectsController.list);
 
 routes.get("/users", auth, usersController.index);
 
