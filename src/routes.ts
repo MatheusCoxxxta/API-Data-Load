@@ -30,8 +30,8 @@ routes.get("/users", auth, usersController.index);
 
 routes.post("/login", authController.signIn);
 
-routes.post("/store/projects", projectDataController.storeProject);
-routes.post("/store/users", projectDataController.storeUsers);
-routes.post("/store/task", tasksController.storeTasks);
+routes.post("/seed/projects", projectDataController.storeProject);
+routes.post("/seed/users", projectDataController.storeUsers);
+routes.post("/seed/task", tasksController.storeTasks);
 
 export default routes;
