@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import generateToken from "../helpers/generateToken";
 import Usuarios from "../models//Usuarios";
 import Token from "../models/Token";
+import bcrypt from "bcrypt";
 
 class Auth {
   async signIn(req: Request, res: Response) {
@@ -14,35 +15,39 @@ class Auth {
         return res.status(404).json({
           message: "Email não encontrado!",
         });
-      } else if (userData.senha !== senha) {
-        return res.status(401).json({
-          message: "Não autorizado!",
-        });
-      } else if (userData.senha === senha) {
-        const token = await generateToken({ id: userData.id });
+      }
 
-        const existentToken = await Token.query()
-          .where("id_usuario", userData.id)
-          .first();
+      bcrypt.compare(senha, userData.senha).then(async (result) => {
+        if (result) {
+          const token = await generateToken({ id: userData.id });
 
-        if (existentToken) {
-          await Token.query().where("id_usuario", userData.id).update({
+          const existentToken = await Token.query()
+            .where("id_usuario", userData.id)
+            .first();
+
+          if (existentToken) {
+            await Token.query().where("id_usuario", userData.id).update({
+              token,
+            });
+          } else {
+            await Token.query().insert({
+              token,
+              id_usuario: userData.id,
+            });
+          }
+
+          userData.senha = "";
+
+          return res.status(200).json({
+            user: userData,
             token,
           });
         } else {
-          await Token.query().insert({
-            token,
-            id_usuario: userData.id,
+          return res.status(401).json({
+            message: "Não autorizado!",
           });
         }
-
-        userData.senha = "";
-
-        return res.status(200).json({
-          user: userData,
-          token,
-        });
-      }
+      });
     } catch (error) {
       return res.status(500).json({
         message: "Ocorreu um erro!",
