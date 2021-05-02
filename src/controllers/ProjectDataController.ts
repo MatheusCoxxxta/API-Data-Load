@@ -8,6 +8,9 @@ import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
 import { removeDeplicated } from "../helpers/RemoveDuplicated";
 import generateHash from "../helpers/generateHash";
+import { admin } from "../../mocks/data/admin";
+import { v4 as uuidv4 } from "uuid";
+import roles from "../constants/roles";
 
 class ProjectDataController {
   async storeProject(request: Request, response: Response) {
@@ -83,13 +86,24 @@ class ProjectDataController {
       users = [...users, myUser];
     });
 
-    const finalUsers = await removeDeplicated(users);
+    const ceo = {
+      id: uuidv4(),
+      imagem: admin.imagem,
+      nome: admin.nome,
+      sobrenome: admin.sobrenome,
+      email: admin.email,
+      senha: generateHash(),
+      id_role: roles.ID_CEO,
+    };
+
+    const totalUsers = users.concat(ceo);
+    const finalUsers = await removeDeplicated(totalUsers);
 
     for (let i = 0; i < finalUsers.length; i++) {
       await Usuarios.query().insert(finalUsers[i]);
     }
 
-    return response.send(finalUsers);
+    return response.send(totalUsers);
   }
 }
 
