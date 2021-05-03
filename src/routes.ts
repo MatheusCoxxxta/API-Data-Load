@@ -42,8 +42,8 @@ routes.post("/login", authController.signIn);
  * TAREFAS
  */
 routes.get("/listar", auth, dataController.listar);
-routes.get("/task/:id", tasksController.read);
-routes.put("/task/:id", tasksController.update);
-routes.delete("/task/:id", tasksController.delete);
+routes.get("/task/:id", auth, tasksController.read);
+routes.put("/task/:id", auth, tasksController.update);
+routes.delete("/task/:id", auth, tasksController.delete);
 
 export default routes;
