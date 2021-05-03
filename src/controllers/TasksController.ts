@@ -4,7 +4,12 @@ import Tarefas from "../models/Tarefas";
 class TasksController {
   async create(request: Request, response: Response) {}
 
-  async read(request: Request, response: Response) {}
+  async read(request: Request, response: Response) {
+    const { id } = request.params;
+    const task = await Tarefas.query().select("*").where("id", id).first();
+
+    return response.status(200).json(task);
+  }
 
   async update(request: Request, response: Response) {
     const { status } = request.body;
@@ -22,7 +27,14 @@ class TasksController {
     });
   }
 
-  async delete(request: Request, response: Response) {}
+  async delete(request: Request, response: Response) {
+    const { id } = request.params;
+    await Tarefas.query().delete().where("id", id);
+
+    return response.status(200).json({
+      message: "Deletado com sucesso",
+    });
+  }
 }
 
 export default TasksController;
