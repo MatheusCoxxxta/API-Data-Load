@@ -4,3 +4,4 @@ database.sqlite
 tmp/
 yarn-error.log
 .vscode/
+build/
