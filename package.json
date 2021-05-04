@@ -7,8 +7,9 @@
     "test": "NODE_ENV=test jest",
     "start": "ts-node-dev src/app.ts",
     "knex:migrate": "knex migrate:latest --knexfile knexfile.ts  migrate:latest",
-    "build": "mkdir build && tsc --outDir build && cp src/database/database.sqlite build/src/database && cp .env build/",
-    "start:prod": "pm2 start build/src/app.js"
+    "build": "tsc",
+    "start:prod": "pm2 start build/src/app.js",
+    "backup": "cd ../ && rm -rf dbBackup && mkdir dbBackup && cp server/src/database/database.sqlite dbBackup"
   },
   "keywords": [],
   "author": "",
