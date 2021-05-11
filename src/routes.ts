@@ -32,6 +32,7 @@ routes.get("/exportData", auth, dataController.exportData);
  * USER
  */
 routes.get("/users", auth, usersController.index);
+routes.get("/hours", auth, usersController.listHoursByUser);
 
 /**
  * AUTH
