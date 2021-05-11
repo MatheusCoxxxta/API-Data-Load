@@ -1,7 +1,5 @@
 import { Request, Response } from "express";
 import knex from "../database/connection";
-import { ExportToCsv } from "export-to-csv";
-import fs from "fs";
 import Projetos from "../models/Projetos";
 import Usuarios from "../models/Usuarios";
 import roles from "../constants/roles";
@@ -49,7 +47,7 @@ const getData = async (projectId: any, userId?: string) => {
   return tasks;
 };
 
-const getStats = async (projectId: any, userId?: any, selectedUser?: any) => {
+const getStats = async (projectId: any, userId?: any) => {
   let stats: {
     IN_PROGRESS: number;
     QA_TESTING: number;
