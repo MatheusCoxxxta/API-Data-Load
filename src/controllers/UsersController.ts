@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import Tarefas from "../models/Tarefas";
 import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
 
@@ -10,7 +11,31 @@ class UsersController {
       delete user.senha;
     });
 
-    return response.send({ users });
+    const filteredUsers = users.filter((user) => user.id_role !== "1");
+
+    return response.send({ filteredUsers });
+  }
+
+  async listHoursByUser(request: Request, response: Response) {
+    const users: usuario[] = await Usuarios.query().select("*");
+    const filteredUsers = users.filter((user) => user.id_role !== "1");
+
+    let hours: any[] = [];
+
+    for (let i = 0; i < filteredUsers.length; i++) {
+      const hour: any = await Tarefas.query()
+        .sum("horas")
+        .where("id_usuario", filteredUsers[i].id);
+
+      const joinUserHour = {
+        ...hour[0],
+        user: filteredUsers[i],
+      };
+
+      hours = [...hours, joinUserHour];
+    }
+
+    return response.json(hours);
   }
 }
 
