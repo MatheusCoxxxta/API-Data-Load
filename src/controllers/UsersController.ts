@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import roles from "../constants/roles";
 import Tarefas from "../models/Tarefas";
 import Usuarios from "../models/Usuarios";
 import { usuario } from "../types/Usuarios";
@@ -11,14 +12,14 @@ class UsersController {
       delete user.senha;
     });
 
-    const filteredUsers = users.filter((user) => user.id_role !== "1");
+    const filteredUsers = users.filter((user) => user.id_role !== roles.ID_CEO);
 
     return response.send({ filteredUsers });
   }
 
   async listHoursByUser(request: Request, response: Response) {
     const users: usuario[] = await Usuarios.query().select("*");
-    const filteredUsers = users.filter((user) => user.id_role !== "1");
+    const filteredUsers = users.filter((user) => user.id_role !== roles.ID_CEO);
 
     let hours: any[] = [];
 
