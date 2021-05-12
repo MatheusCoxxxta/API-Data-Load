@@ -1,9 +1,8 @@
 import { Request, Response } from "express";
 import knex from "../database/connection";
-import { ExportToCsv } from "export-to-csv";
-import fs from "fs";
 import Projetos from "../models/Projetos";
 import Usuarios from "../models/Usuarios";
+import roles from "../constants/roles";
 
 const getData = async (projectId: any, userId?: string) => {
   let data;
@@ -123,7 +122,7 @@ class DataController {
     const projectId = request.headers.projectid || "";
     const user = await Usuarios.query().select("*").where("id", userId).first();
 
-    if (user.id_role === "0") {
+    if (user.id_role === roles.ID_GESTOR) {
       if (userId && projectId) {
         const tasks = await getData(projectId, userId);
 
@@ -148,59 +147,6 @@ class DataController {
         });
       }
     }
-  }
-
-  async exportData(request: Request, res: Response) {
-    const options = {
-      fieldSeparator: "|",
-      quoteStrings: "",
-      decimalSeparator: ".",
-      showLabels: true,
-      showTitle: true,
-      title: "Dados GSW",
-      useTextFile: false,
-      useBom: true,
-      useKeysAsHeaders: false,
-      headers: [
-        "Id do projeto",
-        "Status do projeto",
-        "Horas trabalhadas",
-        "Data de início",
-        "Nome do projeto",
-        "Status de conlusão",
-        "Descrição do projeto",
-        "Id do colaborador",
-        "Nome do colaborador",
-        "URL da imagem",
-        "Email do colaborador",
-        "Sobrenome do colaborador",
-      ],
-    };
-
-    const data = await knex("projetos")
-      .join("usuarios", "usuarios.id", "projetos.id_usuario")
-      .select(
-        "projetos.id",
-        "projetos.status",
-        "projetos.horas",
-        "projetos.dataInicio",
-        "projetos.projetoNome",
-        "projetos.concluido",
-        "projetos.descricao",
-        "projetos.id_usuario",
-        "usuarios.nome",
-        "usuarios.imagem",
-        "usuarios.email",
-        "usuarios.sobrenome"
-      );
-
-    const csvExporter = new ExportToCsv(options);
-    const csvData = csvExporter.generateCsv(data, true);
-    const fileName = `data-${Math.random()}.csv`;
-    const file = `./tmp/${fileName}`;
-    fs.writeFileSync(`./tmp/${fileName}`, csvData);
-
-    return res.download(file);
   }
 }
 
